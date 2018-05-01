@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /*
-         * Set up the text boxes.
+         * Sets up the text boxes.
          */
         final TextView prompt = findViewById(R.id.prompt);
         final TextView topHeadline = findViewById(R.id.topHeadline);
