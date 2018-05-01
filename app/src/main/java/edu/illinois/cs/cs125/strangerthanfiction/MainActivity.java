@@ -1,5 +1,7 @@
 package edu.illinois.cs.cs125.strangerthanfiction;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,7 +24,6 @@ import org.json.JSONObject;
 
 import java.util.*;
 
-import edu.illinois.cs.cs125.userinterfacetest.R;
 
 public class MainActivity extends AppCompatActivity {
     /** Default logging tag for messages from the main activity. */
@@ -30,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     public boolean topTrue = true;
     public int numCorrect = 0;
     public int totalRounds = 0;
+    String linkURL = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +44,8 @@ public class MainActivity extends AppCompatActivity {
         final TextView prompt = findViewById(R.id.prompt);
         final TextView topHeadline = findViewById(R.id.topHeadline);
         final TextView bottomHeadline = findViewById(R.id.bottomHeadline);
-        topHeadline.setText("''Big Don talks with Kim Jong''");
+        newHeadlines();
         topHeadline.setTextSize(20);
-        bottomHeadline.setText("''Handshake between Donald and Kim goes well''");
         bottomHeadline.setTextSize(20);
 
         /*
@@ -53,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         final Button topButton = findViewById(R.id.topButton);
         final Button bottomButton = findViewById(R.id.bottomButton);
         final Button next = findViewById(R.id.next);
+        final Button link = findViewById(R.id.linkButton);
 
         topButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,10 +66,14 @@ public class MainActivity extends AppCompatActivity {
                     bottomHeadline.setVisibility(View.INVISIBLE);
                     bottomButton.setVisibility(View.INVISIBLE);
                     next.setVisibility(View.VISIBLE);
+                    link.setVisibility(View.VISIBLE);
+                    topButton.setClickable(false);
                 } else {
                     topHeadline.setVisibility(View.INVISIBLE);
                     topButton.setVisibility(View.INVISIBLE);
                     next.setVisibility(View.VISIBLE);
+                    link.setVisibility(View.VISIBLE);
+                    bottomButton.setClickable(false);
                 }
             }
         });
@@ -81,10 +87,14 @@ public class MainActivity extends AppCompatActivity {
                     topHeadline.setVisibility(View.INVISIBLE);
                     topButton.setVisibility(View.INVISIBLE);
                     next.setVisibility(View.VISIBLE);
+                    link.setVisibility(View.VISIBLE);
+                    bottomButton.setClickable(false);
                 } else {
                     bottomHeadline.setVisibility(View.INVISIBLE);
                     bottomButton.setVisibility(View.INVISIBLE);
                     next.setVisibility(View.VISIBLE);
+                    link.setVisibility(View.VISIBLE);
+                    topButton.setClickable(false);
                 }
             }
         });
@@ -98,6 +108,15 @@ public class MainActivity extends AppCompatActivity {
                 newHeadlines();
             }
         });
+        link.setVisibility(View.INVISIBLE);
+        link.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "Link button clicked");
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(linkURL));
+                startActivity(browserIntent);
+            }
+        });
     }
     public void newHeadlines() {
         final Button next = findViewById(R.id.next);
@@ -107,6 +126,10 @@ public class MainActivity extends AppCompatActivity {
         final Button topButton = findViewById(R.id.topButton);
         final Button bottomButton = findViewById(R.id.bottomButton);
         final TextView prompt = findViewById(R.id.prompt);
+        final Button link = findViewById(R.id.linkButton);
+        link.setVisibility(View.INVISIBLE);
+        topButton.setClickable(true);
+        bottomButton.setClickable(true);
         topHeadline.setVisibility(View.VISIBLE);
         bottomHeadline.setVisibility(View.VISIBLE);
         topButton.setVisibility(View.VISIBLE);
@@ -141,6 +164,7 @@ public class MainActivity extends AppCompatActivity {
                     JsonObject data2 = child.get("data").getAsJsonObject();
                     String title = data2.get("title").getAsString();
                     topHeadline.setText(title);
+                    linkURL = data2.get("url").getAsString();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -162,6 +186,8 @@ public class MainActivity extends AppCompatActivity {
                     JsonObject data2 = child.get("data").getAsJsonObject();
                     String title = data2.get("title").getAsString();
                     bottomHeadline.setText(title);
+                    linkURL = data2.get("url").getAsString();
+                    Log.d("searching", result.toString());
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -186,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
                     JsonObject data2 = child.get("data").getAsJsonObject();
                     String title = data2.get("title").getAsString();
                     topHeadline.setText(title);
+                    linkURL = data2.get("url").getAsString();
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -207,6 +234,7 @@ public class MainActivity extends AppCompatActivity {
                     JsonObject data2 = child.get("data").getAsJsonObject();
                     String title = data2.get("title").getAsString();
                     bottomHeadline.setText(title);
+                    linkURL = data2.get("url").getAsString();
                 }
             }, new Response.ErrorListener() {
                 @Override
